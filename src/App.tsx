@@ -1,26 +1,169 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
+import { Button, Modal, Fade, Slide } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from './Theme'
 
-function App() {
+
+export const App = () => {
+  const classes = useStyles()
+  const [open, setOpen] = useState(false)
+  const [step, setStep] = useState(0)
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left')
+  const [slideIn, setSlideIn] = useState(true)
+
+  const onNavClick = (direction: 'left' | 'right') => {
+      const increment = direction === 'left' ? -1 : 1;
+      const newIndex = (step + increment + 3) % 3;
+
+      const oppDirection = direction === 'left' ? 'right' : 'left';
+      setSlideDirection(direction);
+      setSlideIn(false);
+
+      setTimeout(() => {
+        setStep(newIndex);
+        setSlideDirection(oppDirection);
+        setSlideIn(true);
+      }, 200);
+  }
+
+  const onClose = () => {
+    setOpen(false)
+    setTimeout(() => setStep(0), 100)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={classes.container}>
+      <Button
+        onClick={() => setOpen(true)}
+        color="secondary"
+        disableRipple={true}
+        variant="outlined"
+        className={classes.button}
+      >
+        Hello World
+      </Button>
+        <Modal className={classes.modal} open={open} onClose={onClose} style={{padding: '30px'}}>
+          <Fade in={open} >
+            <div className={classes.modalContent}>
+              <Slide
+                in={slideIn}
+                direction={slideDirection}
+                appear={false}
+                timeout={150}
+              >
+                <div style={{height: '100%'}}>
+                  <Steps step={step} setStep={onNavClick} onClose={onClose}/>
+                </div>
+              </Slide>
+            </div>
+          </Fade>
+        </Modal>
     </div>
   );
 }
 
-export default App;
+const Steps = ({step, setStep, onClose}: { step: number, setStep: (direction: 'left' | 'right') => void, onClose: () => void }) => {
+  const classes = useStyles()
+  switch(step) {
+    case 0:
+      return (
+        <div className={classes.content}>
+          <div>STEP 0</div>
+          <Button
+          onClick={() => setStep('right')}
+          color="primary"
+          disableRipple={true}
+          variant="outlined"
+          className={classes.button}
+          style={{alignSelf: 'flex-end'}}
+        >
+          Next
+        </Button>
+        </div>
+      )
+    case 1:
+      return (
+        <div className={classes.content}>
+          <div>STEP 1</div>
+          <div style={{display: 'flex', width: '100%', justifyContent: 'space-between'}}>
+            <Button
+              onClick={() => setStep('left')}
+              color="primary"
+              disableRipple={true}
+              variant="outlined"
+              className={classes.button}
+              style={{alignSelf: 'flex-start'}}
+            >
+              Previous
+            </Button>
+            <Button
+              style={{alignSelf: 'flex-end'}}
+              onClick={() => setStep('right')}
+              color="primary"
+              disableRipple={true}
+              variant="outlined"
+              className={classes.button}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )
+    case 2:
+      return (
+        <div className={classes.content}>
+          <div>STEP 2</div>
+          <Button
+            onClick={onClose}
+            color="primary"
+            disableRipple={true}
+            variant="outlined"
+            className={classes.button}
+            style={{alignSelf: 'flex-end'}}
+          >
+            Close
+          </Button>
+        </div>
+      )
+    default:
+      return null
+  }
+}
+
+const useStyles = makeStyles((theme: Theme) => ({
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh'
+  },
+  button: {
+    backgroundColor: theme.colors.clear,
+    minWidth: '110px'
+  },
+  modal: {
+    display: 'grid',
+    placeItems: 'center',
+    overflow: 'hidden'
+  },
+  modalContent: {
+    height: '75vh',
+    maxWidth: '700px',
+    width: '100%',
+    backgroundColor: '#F6F6F9',
+    borderRadius: 4,
+    overflow: 'hidden',
+    padding: '50px',
+    '&:focus': {
+      outline: 'none'
+    }
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F6F6F9',
+    height: '100%'
+  }
+}));
