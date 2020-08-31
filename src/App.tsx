@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { Button, Modal, Fade, Slide } from '@material-ui/core'
+import { Button, Modal, Fade, Slide, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
+import * as d3 from 'd3'
+
+import Table from './Table'
 import { Theme } from './Theme'
 
 
@@ -10,6 +13,10 @@ export const App = () => {
   const [step, setStep] = useState(0)
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left')
   const [slideIn, setSlideIn] = useState(true)
+  d3.select("body")
+  .data([1,2,3])
+  .style("background-color", (d) => { console.log(d); return "lightray"});
+
 
   const onNavClick = (direction: 'left' | 'right') => {
       const increment = direction === 'left' ? -1 : 1;
@@ -35,9 +42,7 @@ export const App = () => {
     <div className={classes.container}>
       <Button
         onClick={() => setOpen(true)}
-        color="secondary"
-        disableRipple={true}
-        variant="outlined"
+        variant="contained"
         className={classes.button}
       >
         Hello World
@@ -49,7 +54,8 @@ export const App = () => {
                 in={slideIn}
                 direction={slideDirection}
                 appear={false}
-                timeout={150}
+                timeout={{appear: 150, enter: 150, exit: 25}}
+                unmountOnExit={true}
               >
                 <div style={{height: '100%'}}>
                   <Steps step={step} setStep={onNavClick} onClose={onClose}/>
@@ -67,63 +73,84 @@ const Steps = ({step, setStep, onClose}: { step: number, setStep: (direction: 'l
   switch(step) {
     case 0:
       return (
-        <div className={classes.content}>
-          <div>STEP 0</div>
-          <Button
-          onClick={() => setStep('right')}
-          color="primary"
-          disableRipple={true}
-          variant="outlined"
-          className={classes.button}
-          style={{alignSelf: 'flex-end'}}
-        >
-          Next
-        </Button>
-        </div>
-      )
-    case 1:
-      return (
-        <div className={classes.content}>
-          <div>STEP 1</div>
-          <div style={{display: 'flex', width: '100%', justifyContent: 'space-between'}}>
+        <Fade in={true} timeout={500}>
+          <div className={classes.content}>
+            <Typography variant="h4" gutterBottom>STEP 0</Typography>
+            <Table/>
             <Button
-              onClick={() => setStep('left')}
-              color="primary"
-              disableRipple={true}
-              variant="outlined"
-              className={classes.button}
-              style={{alignSelf: 'flex-start'}}
-            >
-              Previous
-            </Button>
-            <Button
-              style={{alignSelf: 'flex-end'}}
               onClick={() => setStep('right')}
               color="primary"
               disableRipple={true}
               variant="outlined"
               className={classes.button}
+              style={{alignSelf: 'flex-end'}}
             >
               Next
             </Button>
           </div>
-        </div>
+        </Fade>
+      )
+    case 1:
+      return (
+        <Fade in={true} timeout={500}>
+          <div className={classes.content}>
+            <Typography variant="h4" gutterBottom>STEP 1</Typography>
+            <Table/>
+            <div style={{display: 'flex', width: '100%', justifyContent: 'space-between'}}>
+              <Button
+                onClick={() => setStep('left')}
+                color="primary"
+                disableRipple={true}
+                variant="outlined"
+                className={classes.button}
+                style={{alignSelf: 'flex-start'}}
+              >
+                Previous
+              </Button>
+              <Button
+                style={{alignSelf: 'flex-end'}}
+                onClick={() => setStep('right')}
+                color="primary"
+                disableRipple={true}
+                variant="outlined"
+                className={classes.button}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </Fade>
       )
     case 2:
       return (
-        <div className={classes.content}>
-          <div>STEP 2</div>
-          <Button
-            onClick={onClose}
-            color="primary"
-            disableRipple={true}
-            variant="outlined"
-            className={classes.button}
-            style={{alignSelf: 'flex-end'}}
-          >
-            Close
-          </Button>
-        </div>
+        <Fade in={true} timeout={500}>
+          <div className={classes.content}>
+            <Typography variant="h4" gutterBottom>STEP 2</Typography>
+            <Table/>
+            <div style={{display: 'flex', width: '100%', justifyContent: 'space-between'}}>
+              <Button
+                onClick={() => setStep('left')}
+                color="primary"
+                disableRipple={true}
+                variant="outlined"
+                className={classes.button}
+                style={{alignSelf: 'flex-start'}}
+              >
+                Previous
+              </Button>
+              <Button
+                onClick={onClose}
+                color="primary"
+                disableRipple={true}
+                variant="outlined"
+                className={classes.button}
+                style={{alignSelf: 'flex-end'}}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </Fade>
       )
     default:
       return null
